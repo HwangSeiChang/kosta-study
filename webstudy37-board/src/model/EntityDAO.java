@@ -72,7 +72,7 @@ public class EntityDAO {
 	 * 
 	 */
 	//매개변수에 PagingBean을 명시해야함
-	public ArrayList<BoardVO> getPostList(){
+	/*public ArrayList<BoardVO> getPostList(){
 		ArrayList<BoardVO> list = new ArrayList<BoardVO>();
 		Connection con = null;
 		ResultSet rs = null;
@@ -89,6 +89,76 @@ public class EntityDAO {
 			rs = con.prepareStatement(sql.toString()).executeQuery();
 			while(rs.next())
 				list.add(new BoardVO(
+						rs.getInt(1),rs.getString(2),
+						rs.getString(3),rs.getString(4),
+						rs.getString(5),rs.getString(6),rs.getString(7)));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				closeAll(rs,null, con);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}*/
+	
+	public int getAllPostCount() {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		int count = 0;
+		try {
+			con = getConnection();
+			pstmt = con.prepareStatement("select count(*) from board");
+			rs = pstmt.executeQuery();
+			if(rs.next())
+				count = rs.getInt(1);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				closeAll(pstmt, con);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return count;
+	}
+	
+	public ListVO getPostList(String nowPage){
+		ArrayList<BoardVO> board = new ArrayList<BoardVO>();
+		PagingBean page = null;
+		
+		if(nowPage == null || nowPage.equals(null))
+			page = new PagingBean(getAllPostCount());
+		else
+			page = new PagingBean(getAllPostCount(), Integer.parseInt(nowPage));
+		
+		ListVO list = new ListVO(board,page);
+		
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			con = getConnection();
+			StringBuilder sql = new StringBuilder();
+			sql.append("select p.bno, p.title, p.content, p.regdate, p.count, p.id, p.img_name ");
+			sql.append("from( ");
+			sql.append("select row_number() over(order by bno desc) as board_no,bno,title,content,regdate,count,id,img_name ");
+			sql.append("from board order by bno desc ");
+			sql.append(") p, b_user buser ");
+			sql.append("where board_no between ? and ? and p.id = buser.id ");
+			sql.append("order by bno desc");
+			pstmt = con.prepareStatement(sql.toString());
+			pstmt.setInt(1, page.getStartRowNumber());
+			pstmt.setInt(2, page.getEndRowNumber());
+			rs = pstmt.executeQuery();
+			while(rs.next())
+				list.getList().add(new BoardVO(
 						rs.getInt(1),rs.getString(2),
 						rs.getString(3),rs.getString(4),
 						rs.getString(5),rs.getString(6),rs.getString(7)));

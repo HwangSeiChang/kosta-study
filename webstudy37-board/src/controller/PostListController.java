@@ -22,7 +22,7 @@ import model.EntityDAO;
 public class PostListController implements Controller {
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-		request.setAttribute("post", EntityDAO.getInstance().getPostList());
+		request.setAttribute("post", EntityDAO.getInstance().getPostList(request.getParameter("nowPage")));
 		request.setAttribute("url", "list.jsp");
 		return "home.jsp";
 	}

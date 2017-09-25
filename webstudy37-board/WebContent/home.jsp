@@ -12,7 +12,7 @@
 <!-- Bootstrap core CSS -->
 <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <!-- Custom styles for this template -->
-<link href="css/mystyle.css" rel="stylesheet">
+<link href="css/mystyle.css?ver=1" rel="stylesheet">
 <script type="text/javascript" src="javascript/myjs.js?ver=2"></script>
 </head>
 

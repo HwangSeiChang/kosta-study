@@ -8,7 +8,7 @@
 		</h1>
 
 		<!-- Blog Post -->
-		<c:forEach items="${requestScope.post}" var="post">
+		<c:forEach items="${requestScope.post.list}" var="post">
 		<div class="card mb-4">
 			<c:choose>
 				<c:when test="${post.img_name != null}">
@@ -29,4 +29,20 @@
 			</div>
 		</div>
 		</c:forEach>
+		
+		
+		<div class="pagination" style="margin-bottom: 50px">
+			<c:set var="pageInfo" value="${post.pagingBean}" />
+			<c:if test="${pageInfo.previousPageGroup}">
+				<a href="DispatcherServlet?command=PostList&nowPage=${pageInfo.startPageOfPageGroup-1}">&laquo;</a>
+			</c:if>
+			
+			<c:forEach begin="${pageInfo.startPageOfPageGroup }" end="${pageInfo.endPageOfPageGroup }" var="groupNumber">
+				<a href="DispatcherServlet?command=PostList&nowPage=${groupNumber}">${groupNumber}</a>
+			</c:forEach>
+			
+			<c:if test="${pageInfo.nextPageGroup}">
+				<a href="DispatcherServlet?command=PostList&nowPage=${pageInfo.endPageOfPageGroup+1}">&raquo;</a>
+			</c:if>
+		</div>
 </div>
